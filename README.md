@@ -1,7 +1,3 @@
-# ICS344
-
----
-
 # Installation, Configuration, and Attack Execution Steps
 
 This document provides a detailed guide to installing the necessary tools, configuring the environments, and performing the attacks in the project.
