@@ -1,0 +1,25 @@
+admin
+pi
+default
+anonymous
+user1
+bwsa
+hbv7
+kissadmin
+su
+sa
+test
+users
+vice
+wwo
+user
+victim
+root
+root1
+root2
+system
+vagrant
+msfadmin
+
+
+# Consider using smaller file for faster operation.
