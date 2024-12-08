@@ -179,7 +179,7 @@ Ensure the following packages are installed:
 ### 3.2 Configure Caldera Adversary Profile
 Create a profile for the SSH attack like the following:
 
-   - 3.2.1 [Adversary for Metasploitable3]("./adversaries/SSH%20Compromiser%201.yaml"):
+   - 3.2.1 [Adversary for Metasploitable3](./adversaries/SSH%20Compromiser%201.yaml):
    - 3.2.2 [Adversary for Debian(honeypot)](./adversaries/SSH%20Compromiser%202.yaml):
 
 then go to operation tab and create new operation for the selected adversary.
