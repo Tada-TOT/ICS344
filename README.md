@@ -51,6 +51,7 @@ Ensure the following packages are installed:
 ### 2.1 Install Caldera
 1. Install **Node.js** and **Go**:
    > Make sure to install the correct architecture for your host machine.
+
    Nodejs
    ```bash
    curl -fsSL https://deb.nodesource.com/setup_20.18.1 | sudo -E bash -
@@ -181,8 +182,10 @@ Ensure the following packages are installed:
 
 ### 3.2 Configure Caldera Adversary Profile
 Create a profile for the SSH attack like the following:
-   3.2.1 [Adversary for Metasploitable3](./adversaries/SSH Compromiser 1.yaml):
-   3.2.2 [Adversary for Debian(honeypot)](./adversaries/SSH Compromiser 2.yaml): 
+
+   - 3.2.1 [Adversary for Metasploitable3](./adversaries/SSH Compromiser 1.yaml):
+   - 3.2.2 [Adversary for Debian(honeypot)](./adversaries/SSH Compromiser 2.yaml):
+
 then go to operation tab and create new operation for the selected adversary.
 
 ---
