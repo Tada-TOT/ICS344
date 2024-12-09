@@ -46,7 +46,6 @@ Ensure the following packages are installed:
 
 ### 2.1 Install Caldera
 1. Install **Node.js** and **Go**:
-   > Make sure to install the correct architecture for your host machine.
 
    Nodejs
    ```bash
@@ -55,10 +54,11 @@ Ensure the following packages are installed:
    node -v
    ```
 
-   Golang 
+   Golang
+   > Make sure to install the correct architecture for your host machine.
    ```bash
-   wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
-   sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
+   wget https://go.dev/dl/go1.23.4.linux-<ARCH>.tar.gz
+   sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.4.linux-<ARCH>.tar.gz
    export PATH=$PATH:/usr/local/go/bin
    go version
    ```
@@ -91,7 +91,7 @@ Ensure the following packages are installed:
    ```bash
    sudo ./<file_name>.sh
    ```
-   > After running the script, comment the ```curl``` line so that it will not download the agent each time.
+   > After running the script, comment the ```curl``` command's line so that it will not download the agent each time.
 
 ### 2.3 Install Opencanary Honeypot
 1. Set up a virtual environment and install Opencanary on Debian machine:
@@ -129,7 +129,7 @@ Ensure the following packages are installed:
    Clonoe the repository from GitHub:
    ```bash
    git clone https://github.com/wazuh/wazuh-docker.git -b v4.9.2
-   cd signle-node
+   cd wazuh-docker-4.9.2/single-node
    docker-compose -f generate-indexer-certs.yml run --rm generator
    ```
    Run Wazuh
@@ -144,7 +144,7 @@ Ensure the following packages are installed:
    ```bash
    wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.9.2-1_<ARCH>.deb && sudo WAZUH_MANAGER=<Kali_IP> WAZUH_AGENT_NAME=<Agent_name> dpkg -i ./wazuh-agent_4.9.2-1_<ARCH>.deb
    ```
-   > For Metasplotable3, you can download the agent file on Kali, then transfer it to Metasploitable3 using FTP/netcat and run ```dpkg -i ./wazuh-agent_4.9.2-1_<ARCH>.deb```
+   > For Metasploitable3, you can download the agent file on Kali, then transfer it to Metasploitable3 using FTP/netcat and run ```dpkg -i ./wazuh-agent_4.9.2-1_<ARCH>.deb```
 2. Start the agent as background service:
    ```bash
    sudo systemctl daemon-reload
@@ -179,10 +179,10 @@ Ensure the following packages are installed:
 ### 3.2 Configure Caldera Adversary Profile
 Create a profile for the SSH attack like the following:
 
-   - 3.2.1 [Adversary for Metasploitable3](./adversaries/SSH%20Compromiser%201.yaml):
-   - 3.2.2 [Adversary for Debian(honeypot)](./adversaries/SSH%20Compromiser%202.yaml):
+   - 3.2.1 [Adversary profile for Metasploitable3](./adversaries/SSH%20Compromiser%201.yaml):
+   - 3.2.2 [Adversary profile for Debian(honeypot)](./adversaries/SSH%20Compromiser%202.yaml):
 
-then go to operation tab and create new operation for the selected adversary.
+then go to operation tab and create new operation for the selected profile.
 
 ---
 
