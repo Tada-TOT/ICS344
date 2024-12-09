@@ -136,7 +136,7 @@ Ensure the following packages are installed:
    ```bash
    docker-compose up
    ```
-2. Access the Wazuh dashboard at `http://127.0.0.1/app` using ```admin:SecretPassword``` and configure agents to collect logs from the SSH service and honeypot.
+2. Access the Wazuh dashboard at `http://127.0.0.1/app/login` using ```admin:SecretPassword``` and configure agents to collect logs from the SSH service and honeypot.
 
 ### 2.5 Deploy Wazuh Agent
 1. Run the follownig cammand for deploying the agent on Metasploitable3 and Debian:
